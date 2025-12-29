@@ -13,9 +13,14 @@ let mainWindow;
 let pendingFilesToLoad = [];
 
 function createWindow() {
+  // Determine correct paths for preload and HTML file
+  // In production (packaged), __dirname is the dist-electron folder
   const preloadPath = join(__dirname, 'preload.cjs');
+
   console.log('Preload script path:', preloadPath);
   console.log('__dirname:', __dirname);
+  console.log('app.isPackaged:', app.isPackaged);
+  console.log('process.resourcesPath:', process.resourcesPath);
 
   // Verify preload script exists
   if (!existsSync(preloadPath)) {
@@ -43,11 +48,29 @@ function createWindow() {
     mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(join(__dirname, '../dist/index.html'));
+    // In production, use path.join to ensure correct path resolution
+    const indexPath = join(__dirname, '../dist/index.html');
+    console.log('Loading HTML from:', indexPath);
+    console.log('HTML file exists:', existsSync(indexPath));
+    mainWindow.loadFile(indexPath);
   }
 
   mainWindow.webContents.on('did-finish-load', () => {
     console.log('Page finished loading');
+    // Check if preload script loaded successfully
+    mainWindow.webContents.executeJavaScript('console.log("Checking electronAPI:", !!window.electronAPI); !!window.electronAPI')
+      .then(apiLoaded => {
+        if (!apiLoaded) {
+          console.error('⚠️ WARNING: electronAPI not available in renderer!');
+        } else {
+          console.log('✓ electronAPI successfully loaded in renderer');
+        }
+      })
+      .catch(err => console.error('Error checking electronAPI:', err));
+  });
+
+  mainWindow.webContents.on('preload-error', (event, preloadPath, error) => {
+    console.error('Preload script error:', preloadPath, error);
   });
 
   mainWindow.on('ready-to-show', () => {

@@ -20,7 +20,10 @@ export default defineConfig({
           build: {
             outDir: resolve(__dirname, 'dist-electron'),
             rollupOptions: {
-              external: ['electron', 'sharp', 'fs', 'path', 'fs/promises'],
+              external: ['electron', 'sharp', 'fs', 'path', 'fs/promises', 'electron-store'],
+              output: {
+                format: 'es',
+              },
             },
           },
         },

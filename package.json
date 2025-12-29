@@ -9,7 +9,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "package": "npm run build && electron-builder --dir",
-    "dist": "npm run build && electron-builder"
+    "dist": "npm run build && electron-builder",
+    "dist:portable": "npm run build && electron-builder --win portable"
   },
   "keywords": [
     "electron",
@@ -40,16 +41,27 @@
   "build": {
     "appId": "com.imageconverter.app",
     "productName": "Image Converter",
+    "asar": false,
     "directories": {
       "output": "release"
     },
     "files": [
       "dist/**/*",
-      "dist-electron/**/*"
+      "dist-electron/**/*",
+      "node_modules/sharp/**/*"
+    ],
+    "asarUnpack": [
+      "node_modules/sharp/**/*"
     ],
     "fileAssociations": [
       {
-        "ext": ["jpg", "jpeg"],
+        "ext": "jpg",
+        "name": "JPEG Image",
+        "description": "JPEG Image File",
+        "role": "Viewer"
+      },
+      {
+        "ext": "jpeg",
         "name": "JPEG Image",
         "description": "JPEG Image File",
         "role": "Viewer"
@@ -73,7 +85,13 @@
         "role": "Viewer"
       },
       {
-        "ext": ["tiff", "tif"],
+        "ext": "tiff",
+        "name": "TIFF Image",
+        "description": "Tagged Image File Format",
+        "role": "Viewer"
+      },
+      {
+        "ext": "tif",
         "name": "TIFF Image",
         "description": "Tagged Image File Format",
         "role": "Viewer"
@@ -82,11 +100,13 @@
     "win": {
       "target": [
         {
-          "target": "nsis",
+          "target": "portable",
           "arch": ["x64"]
         }
-      ],
-      "fileAssociations": "inherit"
+      ]
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-portable.${ext}"
     },
     "nsis": {
       "oneClick": false,
