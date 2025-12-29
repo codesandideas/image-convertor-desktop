@@ -4,6 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Image Converter</title>
+  <script>
+    // Check if electronAPI is available BEFORE React loads
+    console.log('=== RENDERER: Checking electronAPI ===');
+    console.log('window.electronAPI:', window.electronAPI);
+    console.log('typeof window.electronAPI:', typeof window.electronAPI);
+    if (window.electronAPI) {
+      console.log('✓ electronAPI available with methods:', Object.keys(window.electronAPI));
+    } else {
+      console.error('✗ electronAPI NOT AVAILABLE');
+      console.log('Available window properties:', Object.keys(window).filter(k => k.includes('electron') || k.includes('API')));
+    }
+  </script>
 </head>
 <body>
   <div id="root"></div>

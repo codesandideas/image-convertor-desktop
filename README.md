@@ -47,13 +47,14 @@ npm install
 Run the application in development mode with hot reload:
 
 ```bash
-npm run electron:dev
+npm run dev
 ```
 
 This will:
 - Start the Vite dev server on port 5173
-- Launch the Electron application
+- Automatically launch the Electron application
 - Enable hot module replacement for React components
+- Open DevTools for debugging
 
 ## Building
 
@@ -67,14 +68,18 @@ This creates optimized production files in the `dist` and `dist-electron` direct
 
 ### Create Installers
 
-Build installers for your platform:
-
+**Test package (without installer):**
 ```bash
-npm run electron:build
+npm run package
+```
+
+**Create distributable installers:**
+```bash
+npm run dist
 ```
 
 The installers will be created in the `release` directory:
-- **Windows**: `.exe` installer
+- **Windows**: `.exe` installer (NSIS)
 - **macOS**: `.dmg` installer
 - **Linux**: `.AppImage` and `.deb` packages
 

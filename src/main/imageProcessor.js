@@ -34,10 +34,7 @@ export async function convertImage(inputPath, outputPath, format, options = {}) 
 
     // Handle metadata
     if (!preserveMetadata) {
-      pipeline = pipeline.withMetadata({
-        exif: {},
-        icc: false,
-      });
+      pipeline = pipeline.withMetadata({});
     }
 
     // Convert based on format

@@ -25,13 +25,29 @@ export default function DropZone({ onFilesAdded }) {
   };
 
   const handleFileSelect = async () => {
-    const result = await window.electronAPI.openFiles();
-    if (!result.canceled && result.filePaths.length > 0) {
-      const files = result.filePaths.map(path => ({
-        path,
-        name: path.split('\\').pop().split('/').pop(),
-      }));
+    try {
+      if (!window.electronAPI || !window.electronAPI.openFiles) {
+        console.error('electronAPI not available');
+        return;
+      }
+
+      const result = await window.electronAPI.openFiles();
+      if (!result || result.canceled || !result.filePaths || result.filePaths.length === 0) {
+        return;
+      }
+
+      const files = result.filePaths.map(path => {
+        // Extract filename from path (works with both forward and backward slashes)
+        const normalizedPath = String(path).replace(/\\/g, '/');
+        const name = normalizedPath.split('/').pop();
+        return {
+          path: String(path),
+          name: name,
+        };
+      });
       onFilesAdded(files);
+    } catch (error) {
+      console.error('Error opening file dialog:', error);
     }
   };
 

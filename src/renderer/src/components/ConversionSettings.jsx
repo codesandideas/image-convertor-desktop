@@ -16,9 +16,20 @@ export default function ConversionSettings({
   onOutputFolderSelect,
 }) {
   const handleSelectFolder = async () => {
-    const result = await window.electronAPI.selectFolder();
-    if (!result.canceled && result.filePaths.length > 0) {
+    try {
+      if (!window.electronAPI || !window.electronAPI.selectFolder) {
+        console.error('electronAPI not available');
+        return;
+      }
+
+      const result = await window.electronAPI.selectFolder();
+      if (!result || result.canceled || !result.filePaths || result.filePaths.length === 0) {
+        return;
+      }
+
       onOutputFolderSelect(result.filePaths[0]);
+    } catch (error) {
+      console.error('Error opening folder dialog:', error);
     }
   };
 
